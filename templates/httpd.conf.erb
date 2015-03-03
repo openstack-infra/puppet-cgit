@@ -104,7 +104,7 @@ StartServers       8
 MinSpareServers    5
 MaxSpareServers   20
 ServerLimit      256
-MaxClients       256
+MaxClients       <%= @max_clients_prefork %>
 MaxRequestsPerChild  4000
 </IfModule>
 
@@ -117,7 +117,7 @@ MaxRequestsPerChild  4000
 # MaxRequestsPerChild: maximum number of requests a server process serves
 <IfModule worker.c>
 StartServers         4
-MaxClients         300
+MaxClients         <%= @max_clients_mpm %>
 MinSpareThreads     25
 MaxSpareThreads     75 
 ThreadsPerChild     25
