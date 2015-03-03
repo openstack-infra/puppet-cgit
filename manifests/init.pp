@@ -27,6 +27,7 @@ class cgit(
   $ssl_key_file_contents = '', # If left empty puppet will not create file.
   $ssl_chain_file_contents = '', # If left empty puppet will not create file.
   $behind_proxy = false,
+  $git_timeout = false,
 ) {
 
   if $behind_proxy == true {
@@ -86,6 +87,7 @@ class cgit(
   apache::vhost { $vhost_name:
     port          => $https_port,
     serveraliases => $serveraliases,
+    git_timeout   => $git_timeout,
     docroot       => 'MEANINGLESS ARGUMENT',
     priority      => '50',
     template      => 'cgit/git.vhost.erb',

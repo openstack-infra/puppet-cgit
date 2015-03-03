@@ -24,6 +24,10 @@
 
   ErrorLog /var/log/httpd/git-error.log
 
+  <% if @git_timeout.is_a? Integer -%>
+  <%= "  Timeout {@git_timeout}" -%>
+  <% end -%>
+
   LogLevel warn
 
   CustomLog /var/log/httpd/git-access.log combined
