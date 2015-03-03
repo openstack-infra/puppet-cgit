@@ -28,8 +28,27 @@ class cgit(
   $ssl_chain_file_contents = '', # If left empty puppet will not create file.
   $behind_proxy = false,
   $cgit_timeout = false,
+  $prefork_settings = {}, # override the prefork worker settings
+  $mpm_settings = {} # override the mpm worker settings
 ) {
-
+  validate_hash($prefork_settings)
+  validate_hash($mpm_settings)
+  $default_prefork_settings = {
+    'StartServers'        => 8,
+    'MinSpareServers'     => 5,
+    'MaxSpareServers'     => 20,
+    'ServerLimit'         => 256,
+    'MaxClients'          => 256,
+    'MaxRequestsPerChild' => 4000
+  }
+  $default_mpm_settings = {
+    'StartServers'        => 4,
+    'MaxClients'          => 300,
+    'MinSpareThreads'     => 25,
+    'MaxSpareThreads'     => 75,
+    'ThreadsPerChild'     => 25,
+    'MaxRequestsPerChild' => 0
+  }
   if $behind_proxy == true {
     $http_port = 8080
     $https_port = 4443
@@ -40,6 +59,10 @@ class cgit(
     $https_port = 443
     $daemon_port = 9418
   }
+
+  # merge settings with defaults
+  $final_mpm_settings = merge($default_mpm_settings, $mpm_settings)
+  $final_prefork_settings = merge($default_prefork_settings, $prefork_settings)
 
   include apache
 
