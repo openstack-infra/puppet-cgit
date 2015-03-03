@@ -27,6 +27,8 @@ class cgit(
   $ssl_key_file_contents = '', # If left empty puppet will not create file.
   $ssl_chain_file_contents = '', # If left empty puppet will not create file.
   $behind_proxy = false,
+  $max_clients_prefork = 256,
+  $max_clients_mpm = 300,
 ) {
 
   if $behind_proxy == true {
