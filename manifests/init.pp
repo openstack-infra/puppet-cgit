@@ -27,6 +27,8 @@ class cgit(
   $ssl_key_file_contents = '', # If left empty puppet will not create file.
   $ssl_chain_file_contents = '', # If left empty puppet will not create file.
   $behind_proxy = false,
+  $max_clients_http = 256,
+  $max_clients_mpm = 300,
 ) {
 
   if $behind_proxy == true {
@@ -97,10 +99,10 @@ class cgit(
   }
 
   file { '/etc/httpd/conf/httpd.conf':
-    ensure  => present,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
+    ensure      => present,
+    owner       => 'root',
+    group       => 'root',
+    mode        => '0644',
     content => template('cgit/httpd.conf.erb'),
     require => Package['httpd'],
   }
