@@ -28,6 +28,68 @@ class cgit(
   $ssl_chain_file_contents = '', # If left empty puppet will not create file.
   $behind_proxy = false,
   $cgit_timeout = false,
+  $httpd_settings = [
+    {
+        'name': 'StartServers',
+        'value': 8,
+        'case': 'prefork',
+    },
+    {
+        'name': 'MinSpareServers',
+        'value': 5,
+        'case': 'prefork',
+    },
+    {
+        'name': 'MaxSpareServers',
+        'value': 20,
+        'case': 'prefork',
+    },
+    {
+        'name': 'ServerLimit',
+        'value': 256,
+        'case': 'prefork',
+    },
+    {
+        'name': 'MaxClients',
+        'value': 256,
+        'case': 'prefork',
+    },
+    {
+        'name': 'MaxRequestsPerChild',
+        'value': 4000,
+        'case': 'prefork',
+    },
+    {
+        'name': 'StartServers',
+        'value': 4,
+        'case': 'mpm',
+    },
+    {
+        'name': 'MaxClients',
+        'value': 300,
+        'case': 'mpm',
+    },
+    {
+        'name': 'MinSpareThreads',
+        'value': 25,
+        'case': 'mpm',
+    },
+    {
+        'name': 'MaxSpareThreads',
+        'value': 75,
+        'case': 'mpm',
+    },
+    {
+        'name': 'ThreadsPerChild',
+        'value': 25,
+        'case': 'mpm',
+    },
+    {
+        'name': 'MaxRequestsPerChild',
+        'value': 0,
+        'case': 'mpm',
+    }
+  ]
 ) {
 
   if $behind_proxy == true {
