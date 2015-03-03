@@ -1,4 +1,17 @@
-#
+<% # resolve the default settings and passed in settings into one list
+final_httpd_settings = []
+@default_httpd_settings.each do |setting|
+  in_override = false
+  @httpd_settings.each do |override_setting|
+    if setting['case'] == override_setting['case'] && setting['name'] == override_setting['name']
+      final_httpd_settings.push(override_setting)
+      in_override = true
+    end
+  end
+  if !in_override
+    final_httpd_settings.push(setting)
+  end
+end %>#
 # This is the main Apache server configuration file.  It contains the
 # configuration directives that give the server its instructions.
 # See <URL:http://httpd.apache.org/docs/2.2/> for detailed information.
@@ -100,12 +113,11 @@ KeepAliveTimeout 15
 # MaxClients: maximum number of server processes allowed to start
 # MaxRequestsPerChild: maximum number of requests a server process serves
 <IfModule prefork.c>
-StartServers       8
-MinSpareServers    5
-MaxSpareServers   20
-ServerLimit      256
-MaxClients       256
-MaxRequestsPerChild  4000
+<% final_httpd_settings.each do |setting| -%>
+<% if setting['case'] == 'prefork' -%>
+<%= setting['name'] -%> <%= setting['value'] %>
+<% end -%>
+<% end -%>
 </IfModule>
 
 # worker MPM
@@ -116,12 +128,11 @@ MaxRequestsPerChild  4000
 # ThreadsPerChild: constant number of worker threads in each server process
 # MaxRequestsPerChild: maximum number of requests a server process serves
 <IfModule worker.c>
-StartServers         4
-MaxClients         300
-MinSpareThreads     25
-MaxSpareThreads     75 
-ThreadsPerChild     25
-MaxRequestsPerChild  0
+<% final_httpd_settings.each do |setting| -%>
+<% if setting['case'] == 'mpm' -%>
+<%= setting['name'] -%> <%= setting['value'] %>
+<% end -%>
+<% end -%>
 </IfModule>
 
 #
