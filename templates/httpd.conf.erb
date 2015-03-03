@@ -1,4 +1,7 @@
-#
+<% # resolve the default settings and passed in settings into one list
+final_mpm_settings = scope.function_resolve_option_list([@default_mpm_settings, @mpm_settings])
+final_prefork_settings = scope.function_resolve_option_list([@default_prefork_settings, @prefork_settings])
+%>#
 # This is the main Apache server configuration file.  It contains the
 # configuration directives that give the server its instructions.
 # See <URL:http://httpd.apache.org/docs/2.2/> for detailed information.
@@ -100,12 +103,9 @@ KeepAliveTimeout 15
 # MaxClients: maximum number of server processes allowed to start
 # MaxRequestsPerChild: maximum number of requests a server process serves
 <IfModule prefork.c>
-StartServers       8
-MinSpareServers    5
-MaxSpareServers   20
-ServerLimit      256
-MaxClients       256
-MaxRequestsPerChild  4000
+<% final_prefork_settings.keys.sort.each do |setting| -%>
+<%= setting -%> <%= final_prefork_settings[setting] %>
+<% end -%>
 </IfModule>
 
 # worker MPM
@@ -116,12 +116,9 @@ MaxRequestsPerChild  4000
 # ThreadsPerChild: constant number of worker threads in each server process
 # MaxRequestsPerChild: maximum number of requests a server process serves
 <IfModule worker.c>
-StartServers         4
-MaxClients         300
-MinSpareThreads     25
-MaxSpareThreads     75 
-ThreadsPerChild     25
-MaxRequestsPerChild  0
+<% final_mpm_settings.keys.sort.each do |setting| -%>
+<%= setting -%> <%= final_mpm_settings[setting] %>
+<% end -%>
 </IfModule>
 
 #
