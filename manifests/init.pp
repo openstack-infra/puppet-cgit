@@ -30,6 +30,7 @@ class cgit(
   $cgit_timeout = false,
   $prefork_settings = {}, # override the prefork worker settings
   $mpm_settings = {} # override the mpm worker settings
+  $cgitrc_settings = {}
 ) {
   validate_hash($prefork_settings)
   validate_hash($mpm_settings)
@@ -49,6 +50,27 @@ class cgit(
     'ThreadsPerChild'     => 25,
     'MaxRequestsPerChild' => 0
   }
+  $default_cgitrc_settings = {
+    'cache-size'          => 1000,
+    'cache-repo-ttl'      => 1,
+    'cache-root-ttl'      => 1,
+    'clone-prefix'        => 'git://git.openstack.org https://git.openstack.org',
+    'enable-index-owner'  => 0,
+    'enable-index-links'  => 0,
+    'enable-http-clone'   => 0,
+    'max-stats'           => 'quarter',
+    'side-by-side-diffs'  => 1,
+    'mimetype.gif'        => 'image/gif',
+    'mimetype.html'       => 'text/html',
+    'mimetype.jpg'        => 'image/jpeg',
+    'mimetype.jpeg'       => 'image/jpeg',
+    'mimetype.pdf'        => 'application/pdf',
+    'mimetype.png'        => 'image/png',
+    'mimetype.svg'        => 'image/svg+xml',
+    'source-filter'       => '/usr/libexec/cgit/filters/syntax-highlighting.sh',
+    'max-repo-count'      => 600,
+    'include'             => '/etc/cgitrepos'
+  }
   if $behind_proxy == true {
     $http_port = 8080
     $https_port = 4443
@@ -63,6 +85,7 @@ class cgit(
   # merge settings with defaults
   $final_mpm_settings = merge($default_mpm_settings, $mpm_settings)
   $final_prefork_settings = merge($default_prefork_settings, $prefork_settings)
+  $final_cgitrc_settings = merge($default_cgitrc_settings, $cgitrc_settings)
 
   include apache
 
@@ -196,4 +219,13 @@ class cgit(
       before  => Apache::Vhost[$vhost_name],
     }
   }
+
+  file { '/etc/cgitrc':
+    ensure  => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('cgit/cgitrc.erb')
+  }
+
 }
