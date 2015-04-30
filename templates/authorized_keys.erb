@@ -1,0 +1,6 @@
+# This file contains a list of authorized ssh keys for read-only access to git
+# The list should be kept to a minimum
+# Each key should have a descriptive comment field including points of contact
+<% @authorized_keys.each do |authorized_key| -%>
+<%= authorized_key %>
+<% end -%>
