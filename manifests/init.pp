@@ -165,6 +165,10 @@ class cgit(
     notify  => Service['httpd'],
   }
 
+  httpd_mod { 'version':
+    ensure => present,
+  }
+
   file { $cgitdir:
     ensure => directory,
     owner  => 'root',
