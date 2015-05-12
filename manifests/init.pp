@@ -165,6 +165,20 @@ class cgit(
     notify  => Service['httpd'],
   }
 
+  if ($::osfamily == 'Debian') {
+    # httpd_mod is not supported on Centos and mod_version is installed
+    # by default there so this is not necessary unless on Debian.
+    httpd_mod { 'version':
+      ensure => present,
+    }
+  }
+
+  if ($::osfamily == 'RedHat' and $::operatingsystemmajrelease == '7') {
+    package { 'mod_ldap':
+      ensure => present,
+    }
+  }
+
   file { $cgitdir:
     ensure  => directory,
     owner   => 'root',

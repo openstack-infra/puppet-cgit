@@ -140,19 +140,38 @@ Listen <%= scope.lookupvar("cgit::http_port") %>
 # Example:
 # LoadModule foo_module modules/mod_foo.so
 #
+# The version_module has to be available for IfVersion to be parsed,
+# so breaking alphabetical order and loading it first
+
+LoadModule version_module modules/mod_version.so
+
 LoadModule auth_basic_module modules/mod_auth_basic.so
 LoadModule auth_digest_module modules/mod_auth_digest.so
 LoadModule authn_file_module modules/mod_authn_file.so
+LoadModule cache_module modules/mod_cache.so
+<IfVersion >= 2.4>
+LoadModule authn_core_module modules/mod_authn_core.so
+LoadModule authz_core_module modules/mod_authz_core.so
+LoadModule authz_core_module modules/mod_authz_host.so
+LoadModule cache_disk_module modules/mod_cache_disk.so
+LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
+LoadModule socache_shmcb_module modules/mod_socache_shmcb.so
+LoadModule slotmem_shm_module modules/mod_slotmem_shm.so
+LoadModule unixd_module modules/mod_unixd.so
+</IfVersion>
+<IfVersion < 2.4>
 LoadModule authn_alias_module modules/mod_authn_alias.so
+LoadModule authn_default_module modules/mod_authn_default.so
+LoadModule authz_default_module modules/mod_authz_default.so
+LoadModule disk_cache_module modules/mod_disk_cache.so
+</IfVersion>
 LoadModule authn_anon_module modules/mod_authn_anon.so
 LoadModule authn_dbm_module modules/mod_authn_dbm.so
-LoadModule authn_default_module modules/mod_authn_default.so
 LoadModule authz_host_module modules/mod_authz_host.so
 LoadModule authz_user_module modules/mod_authz_user.so
 LoadModule authz_owner_module modules/mod_authz_owner.so
 LoadModule authz_groupfile_module modules/mod_authz_groupfile.so
 LoadModule authz_dbm_module modules/mod_authz_dbm.so
-LoadModule authz_default_module modules/mod_authz_default.so
 LoadModule ldap_module modules/mod_ldap.so
 LoadModule authnz_ldap_module modules/mod_authnz_ldap.so
 LoadModule include_module modules/mod_include.so
@@ -187,11 +206,8 @@ LoadModule proxy_ftp_module modules/mod_proxy_ftp.so
 LoadModule proxy_http_module modules/mod_proxy_http.so
 LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
 LoadModule proxy_connect_module modules/mod_proxy_connect.so
-LoadModule cache_module modules/mod_cache.so
 LoadModule suexec_module modules/mod_suexec.so
-LoadModule disk_cache_module modules/mod_disk_cache.so
 LoadModule cgi_module modules/mod_cgi.so
-LoadModule version_module modules/mod_version.so
 
 #
 # The following modules are not loaded by default:
@@ -212,6 +228,10 @@ LoadModule version_module modules/mod_version.so
 # Load config files from the config directory "/etc/httpd/conf.d".
 #
 Include conf.d/*.conf
+
+<% if @operatingsystem == 'CentOS' && @operatingsystemmajrelease.to_i >= 7 -%>
+Include conf.modules.d/*.conf
+<% end -%>
 
 #
 # ExtendedStatus controls whether Apache will generate "full" status
@@ -333,8 +353,13 @@ DocumentRoot "/var/www/html"
 #
 # Controls who can get stuff from this server.
 #
+<IfVersion >= 2.4>
+    Require all granted
+</IfVersion>
+<IfVersion < 2.4>
     Order allow,deny
     Allow from all
+</IfVersion>
 
 </Directory>
 
@@ -406,9 +431,14 @@ AccessFileName .htaccess
 # viewed by Web clients.
 #
 <Files ~ "^\.ht">
+    <IfVersion >= 2.4>
+    Require all denied
+    </IfVersion>
+    <IfVersion < 2.4>
     Order allow,deny
     Deny from all
     Satisfy All
+    </IfVersion>
 </Files>
 
 #
@@ -546,8 +576,13 @@ Alias /icons/ "/var/www/icons/"
 <Directory "/var/www/icons">
     Options Indexes MultiViews FollowSymLinks
     AllowOverride None
+    <IfVersion >= 2.4>
+    Require all granted
+    </IfVersion>
+    <IfVersion < 2.4>
     Order allow,deny
     Allow from all
+    </IfVersion>
 </Directory>
 
 #
@@ -575,8 +610,13 @@ ScriptAlias /cgi-bin/ "/var/www/cgi-bin/"
 <Directory "/var/www/cgi-bin">
     AllowOverride None
     Options None
+    <IfVersion >= 2.4>
+    Require all granted
+    </IfVersion>
+    <IfVersion < 2.4>
     Order allow,deny
     Allow from all
+    </IfVersion>
 </Directory>
 
 #
@@ -854,8 +894,14 @@ Alias /error/ "/var/www/error/"
         Options IncludesNoExec
         AddOutputFilter Includes html
         AddHandler type-map var
+        <IfVersion >= 2.4>
+        Require all granted
+        </IfVersion>
+        <IfVersion < 2.4>
         Order allow,deny
         Allow from all
+        </IfVersion>
+
         LanguagePriority en es de fr
         ForceLanguagePriority Prefer Fallback
     </Directory>
