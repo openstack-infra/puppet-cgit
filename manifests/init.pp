@@ -165,6 +165,16 @@ class cgit(
     notify  => Service['httpd'],
   }
 
+  httpd_mod { 'version':
+    ensure => present,
+  }
+
+  if ($::osfamily == 'RedHat' and $::operatingsystemmajrelease == '7') {
+    package { 'mod_ldap':
+      ensure => present,
+    }
+  }
+
   file { $cgitdir:
     ensure  => directory,
     owner   => 'root',
