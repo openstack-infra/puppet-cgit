@@ -53,6 +53,7 @@ class cgit(
   }
   $default_cgitrc_settings = {
     'cache-size'          => 1000,
+    'cache-dynamic-ttl'   => 1,
     'cache-repo-ttl'      => 1,
     'cache-root-ttl'      => 1,
     'clone-prefix'        => '',
