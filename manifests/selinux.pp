@@ -27,10 +27,6 @@ class cgit::selinux {
     value      => on
   }
 
-  package { 'policycoreutils-python':
-    ensure => present,
-  }
-
   exec { 'cgit_allow_http_port':
     # If we cannot add the rule modify the existing rule.
     onlyif      => "bash -c \'! semanage port -a -t http_port_t -p tcp ${::cgit::http_port}\'",
