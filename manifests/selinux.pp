@@ -27,17 +27,12 @@ class cgit::selinux {
     value      => on
   }
 
-  package { 'policycoreutils-python':
-    ensure => present,
-  }
-
   exec { 'cgit_allow_http_port':
     # If we cannot add the rule modify the existing rule.
     onlyif      => "bash -c \'! semanage port -a -t http_port_t -p tcp ${::cgit::http_port}\'",
     command     => "semanage port -m -t http_port_t -p tcp ${::cgit::http_port}",
     path        => '/bin:/usr/sbin',
     before      => Service['httpd'],
-    require     => Package['policycoreutils-python'],
     subscribe   => File['/etc/httpd/conf/httpd.conf'],
     refreshonly => true,
   }
@@ -47,7 +42,6 @@ class cgit::selinux {
     onlyif      => "bash -c \'! semanage port -a -t http_port_t -p tcp ${::cgit::https_port}\'",
     command     => "semanage port -m -t http_port_t -p tcp ${::cgit::https_port}",
     path        => '/bin:/usr/sbin',
-    require     => Package['policycoreutils-python'],
     subscribe   => File['/etc/httpd/conf.d/ssl.conf'],
     refreshonly => true,
   }
