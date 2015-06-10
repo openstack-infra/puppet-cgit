@@ -112,7 +112,7 @@ class cgit::lb (
     owner  => 'root',
     group  => 'root',
     mode   => '0644',
-    source => 'puppet:///modules/puppet-cgit/rsyslog.haproxy.conf',
+    source => 'puppet:///modules/cgit/rsyslog.haproxy.conf',
     notify => Service['rsyslog'],
   }
 }
