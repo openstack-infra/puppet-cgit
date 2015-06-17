@@ -152,6 +152,7 @@ class cgit(
     mode    => '0644',
     content => template('cgit/httpd.conf.erb'),
     require => Package['httpd'],
+    notify  => Service['httpd'],
   }
 
   file { '/etc/httpd/conf.d/ssl.conf':
@@ -161,6 +162,7 @@ class cgit(
     mode    => '0644',
     content => template('cgit/ssl.conf.erb'),
     require => Package[$::apache::params::ssl_package],
+    notify  => Service['httpd'],
   }
 
   file { $cgitdir:
