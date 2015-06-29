@@ -22,7 +22,7 @@ class cgit::lb (
   $balancer_member_git_ports = ['29418',],
 ) {
   if ($::osfamily == 'RedHat') {
-    class { 'selinux':
+    class { '::selinux':
       mode => 'enforcing'
     }
   }
