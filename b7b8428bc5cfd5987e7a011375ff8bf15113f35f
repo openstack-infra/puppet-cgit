@@ -1,0 +1,10 @@
+Code-Review+2: James E. Blair <corvus@inaugust.com>
+Verified+2: James E. Blair <corvus@inaugust.com>
+Workflow+1: James E. Blair <corvus@inaugust.com>
+Code-Review+2: Jeremy Stanley <fungi@yuggoth.org>
+Workflow+1: Jeremy Stanley <fungi@yuggoth.org>
+Submitted-by: James E. Blair <corvus@inaugust.com>
+Submitted-at: Thu, 09 Jul 2015 00:05:24 +0000
+Reviewed-on: https://review.openstack.org/199785
+Project: openstack-infra/puppet-cgit
+Branch: refs/heads/master
