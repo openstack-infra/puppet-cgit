@@ -8,7 +8,7 @@
 #
 # Do NOT simply read the instructions in here without understanding
 # what they do.  They're here only as hints or reminders.  If you are unsure
-# consult the online docs. You have been warned.  
+# consult the online docs. You have been warned.
 #
 # The configuration directives are grouped into three basic sections:
 #  1. Directives that control the operation of the Apache server process as a
@@ -89,7 +89,7 @@ KeepAliveTimeout 15
 
 ##
 ## Server-Pool Size Regulation (MPM specific)
-## 
+##
 
 # prefork MPM
 # StartServers: number of server processes to start
@@ -122,7 +122,7 @@ KeepAliveTimeout 15
 # ports, in addition to the default. See also the <VirtualHost>
 # directive.
 #
-# Change this to Listen on specific IP addresses as shown below to 
+# Change this to Listen on specific IP addresses as shown below to
 # prevent Apache from glomming onto all bound IP addresses (0.0.0.0)
 #
 #Listen 12.34.56.78:80
@@ -222,14 +222,14 @@ Include conf.d/*.conf
 
 #
 # If you wish httpd to run as a different user or group, you must run
-# httpd as root initially and it will switch.  
+# httpd as root initially and it will switch.
 #
 # User/Group: The name (or #number) of the user/group to run httpd as.
 #  . On SCO (ODT 3) use "User nouser" and "Group nogroup".
 #  . On HPUX you may not be able to use shared memory as nobody, and the
 #    suggested workaround is to create a user www and use that user.
 #  NOTE that some kernels refuse to setgid(Group) or semctl(IPC_SET)
-#  when the value of (unsigned)Group is above 60000; 
+#  when the value of (unsigned)Group is above 60000;
 #  don't use Group #-1 on these systems!
 #
 User apache
@@ -263,13 +263,13 @@ ServerAdmin root@localhost
 # redirections will not work.  See also the UseCanonicalName directive.
 #
 # If your host doesn't have a registered DNS name, enter its IP address here.
-# You will have to access it by its address anyway, and this will make 
+# You will have to access it by its address anyway, and this will make
 # redirections work in a sensible way.
 #
 #ServerName www.example.com:80
 
 #
-# UseCanonicalName: Determines how Apache constructs self-referencing 
+# UseCanonicalName: Determines how Apache constructs self-referencing
 # URLs and the SERVER_NAME and SERVER_PORT variables.
 # When set "Off", Apache will use the Hostname and Port supplied
 # by the client.  When set "On", Apache will use the value of the
@@ -287,10 +287,10 @@ DocumentRoot "/var/www/html"
 #
 # Each directory to which Apache has access can be configured with respect
 # to which services and features are allowed and/or disabled in that
-# directory (and its subdirectories). 
+# directory (and its subdirectories).
 #
-# First, we configure the "default" to be a very restrictive set of 
-# features.  
+# First, we configure the "default" to be a very restrictive set of
+# features.
 #
 <Directory />
     Options FollowSymLinks
@@ -362,7 +362,7 @@ DocumentRoot "/var/www/html"
     # To enable requests to /~user/ to serve the user's public_html
     # directory, remove the "UserDir disabled" line above, and uncomment
     # the following line instead:
-    # 
+    #
     #UserDir public_html
 
 </IfModule>
@@ -389,7 +389,7 @@ DocumentRoot "/var/www/html"
 # is requested.
 #
 # The index.html.var file (a type-map) is used to deliver content-
-# negotiated documents.  The MultiViews Option can be used for the 
+# negotiated documents.  The MultiViews Option can be used for the
 # same purpose, but it is much slower.
 #
 DirectoryIndex index.html index.html.var
@@ -402,8 +402,8 @@ DirectoryIndex index.html index.html.var
 AccessFileName .htaccess
 
 #
-# The following lines prevent .htaccess and .htpasswd files from being 
-# viewed by Web clients. 
+# The following lines prevent .htaccess and .htpasswd files from being
+# viewed by Web clients.
 #
 <Files ~ "^\.ht">
     Order allow,deny
@@ -459,9 +459,9 @@ HostnameLookups Off
 #EnableMMAP off
 
 #
-# EnableSendfile: Control whether the sendfile kernel support is 
-# used to deliver files (assuming that the OS supports it). 
-# The default is on; turn this off if you serve from NFS-mounted 
+# EnableSendfile: Control whether the sendfile kernel support is
+# used to deliver files (assuming that the OS supports it).
+# The default is on; turn this off if you serve from NFS-mounted
 # filesystems.  Please see
 # http://httpd.apache.org/docs/2.2/mod/core.html#enablesendfile
 #
@@ -529,13 +529,13 @@ CustomLog logs/access_log combined
 ServerSignature On
 
 #
-# Aliases: Add here as many aliases as you need (with no limit). The format is 
+# Aliases: Add here as many aliases as you need (with no limit). The format is
 # Alias fakename realname
 #
 # Note that if you include a trailing / on fakename then the server will
 # require it to be present in the URL.  So "/icons" isn't aliased in this
-# example, only "/icons/".  If the fakename is slash-terminated, then the 
-# realname must also be slash terminated, and if the fakename omits the 
+# example, only "/icons/".  If the fakename is slash-terminated, then the
+# realname must also be slash terminated, and if the fakename omits the
 # trailing slash, the realname must also omit it.
 #
 # We include the /icons/ alias for FancyIndexed directory listings.  If you
@@ -552,7 +552,7 @@ Alias /icons/ "/var/www/icons/"
 
 #
 # WebDAV module configuration section.
-# 
+#
 <IfModule mod_dav_fs.c>
     # Location of the WebDAV lock database.
     DAVLockDB /var/lib/dav/lockdb
@@ -651,7 +651,7 @@ DefaultIcon /icons/unknown.gif
 # default, and append to directory listings.
 #
 # HeaderName is the name of a file which should be prepended to
-# directory indexes. 
+# directory indexes.
 ReadmeName README.html
 HeaderName HEADER.html
 
@@ -662,16 +662,16 @@ HeaderName HEADER.html
 IndexIgnore .??* *~ *# HEADER* README* RCS CVS *,v *,t
 
 #
-# DefaultLanguage and AddLanguage allows you to specify the language of 
-# a document. You can then use content negotiation to give a browser a 
+# DefaultLanguage and AddLanguage allows you to specify the language of
+# a document. You can then use content negotiation to give a browser a
 # file in a language the user can understand.
 #
 # Specify a default language. This means that all data
-# going out without a specific language tag (see below) will 
+# going out without a specific language tag (see below) will
 # be marked with this one. You probably do NOT want to set
 # this unless you are sure it is correct for all cases.
 #
-# * It is generally better to not mark a page as 
+# * It is generally better to not mark a page as
 # * being a certain language than marking it with the wrong
 # * language!
 #
@@ -682,8 +682,8 @@ IndexIgnore .??* *~ *# HEADER* README* RCS CVS *,v *,t
 # language code is pl) may wish to use "AddLanguage pl .po" to
 # avoid the ambiguity with the common suffix for perl scripts.
 #
-# Note 2: The example entries below illustrate that in some cases 
-# the two character 'Language' abbreviation is not identical to 
+# Note 2: The example entries below illustrate that in some cases
+# the two character 'Language' abbreviation is not identical to
 # the two character 'Country' code for its country,
 # E.g. 'Danmark/dk' versus 'Danish/da'.
 #
@@ -744,7 +744,7 @@ ForceLanguagePriority Prefer Fallback
 
 #
 # Specify a default charset for all content served; this enables
-# interpretation of all content as UTF-8 by default.  To use the 
+# interpretation of all content as UTF-8 by default.  To use the
 # default browser choice (ISO-8859-1), or to allow the META tags
 # in HTML content to override this choice, comment out this
 # directive:
@@ -832,7 +832,7 @@ AddOutputFilter INCLUDES .shtml
 # Putting this all together, we can internationalize error responses.
 #
 # We use Alias to redirect any /error/HTTP_<error>.html.var response to
-# our collection of by-error message multi-language collections.  We use 
+# our collection of by-error message multi-language collections.  We use
 # includes to substitute the appropriate text.
 #
 # You can modify the messages' appearance without changing any of the
@@ -893,8 +893,8 @@ BrowserMatch "JDK/1\.0" force-response-1.0
 
 #
 # The following directive disables redirects on non-GET requests for
-# a directory that does not include the trailing slash.  This fixes a 
-# problem with Microsoft WebFolders which does not appropriately handle 
+# a directory that does not include the trailing slash.  This fixes a
+# problem with Microsoft WebFolders which does not appropriately handle
 # redirects for folders with DAV methods.
 # Same deal with Apple's DAV filesystem and Gnome VFS support for DAV.
 #
@@ -970,7 +970,7 @@ BrowserMatch "^Dreamweaver-WebDAV-SCM1" redirect-carefully
 # use only name-based virtual hosts so the server doesn't need to worry about
 # IP addresses. This is indicated by the asterisks in the directives below.
 #
-# Please see the documentation at 
+# Please see the documentation at
 # <URL:http://httpd.apache.org/docs/2.2/vhosts/>
 # for further details before you try to setup virtual hosts.
 #
@@ -982,7 +982,7 @@ BrowserMatch "^Dreamweaver-WebDAV-SCM1" redirect-carefully
 #
 #NameVirtualHost *:80
 #
-# NOTE: NameVirtualHost cannot be used without a port specifier 
+# NOTE: NameVirtualHost cannot be used without a port specifier
 # (e.g. :80) if mod_ssl is being used, due to the nature of the
 # SSL protocol.
 #
