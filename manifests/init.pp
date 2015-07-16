@@ -89,7 +89,7 @@ class cgit(
   $final_prefork_settings = merge($default_prefork_settings, $prefork_settings)
   $final_cgitrc_settings = merge($default_cgitrc_settings, $cgitrc_settings)
 
-  include apache
+  include ::httpd
 
   if ($::osfamily == 'RedHat') {
     include cgit::selinux
@@ -132,7 +132,7 @@ class cgit(
     require => User['cgit'],
   }
 
-  apache::vhost { $vhost_name:
+  ::httpd::vhost { $vhost_name:
     port          => $https_port,
     serveraliases => $serveraliases,
     docroot       => 'MEANINGLESS ARGUMENT',
@@ -161,7 +161,7 @@ class cgit(
     group   => 'root',
     mode    => '0644',
     content => template('cgit/ssl.conf.erb'),
-    require => Package[$::apache::params::ssl_package],
+    require => Class['::httpd::ssl'],
     notify  => Service['httpd'],
   }
 
@@ -200,7 +200,7 @@ class cgit(
       group   => 'root',
       mode    => '0640',
       content => $ssl_cert_file_contents,
-      before  => Apache::Vhost[$vhost_name],
+      before  => Httpd::Vhost[$vhost_name],
     }
   }
 
@@ -210,7 +210,7 @@ class cgit(
       group   => 'root',
       mode    => '0640',
       content => $ssl_key_file_contents,
-      before  => Apache::Vhost[$vhost_name],
+      before  => Httpd::Vhost[$vhost_name],
     }
   }
 
@@ -220,7 +220,7 @@ class cgit(
       group   => 'root',
       mode    => '0640',
       content => $ssl_chain_file_contents,
-      before  => Apache::Vhost[$vhost_name],
+      before  => Httpd::Vhost[$vhost_name],
     }
   }
   if $manage_cgitrc {
