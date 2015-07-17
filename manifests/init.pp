@@ -166,10 +166,11 @@ class cgit(
   }
 
   file { $cgitdir:
-    ensure => directory,
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
+    ensure  => directory,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    require => Package['httpd']
   }
 
   file { $staticfiles:
