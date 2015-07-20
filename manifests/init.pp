@@ -17,15 +17,15 @@
 class cgit(
   $vhost_name = $::fqdn,
   $serveradmin = "webmaster@${::fqdn}",
-  $serveraliases = '',
+  $serveraliases = undef,
   $cgitdir = '/var/www/cgit',
   $staticfiles = '/var/www/cgit/static',
-  $ssl_cert_file = '',
-  $ssl_key_file = '',
-  $ssl_chain_file = '',
-  $ssl_cert_file_contents = '', # If left empty puppet will not create file.
-  $ssl_key_file_contents = '', # If left empty puppet will not create file.
-  $ssl_chain_file_contents = '', # If left empty puppet will not create file.
+  $ssl_cert_file = undef,
+  $ssl_key_file = undef,
+  $ssl_chain_file = undef,
+  $ssl_cert_file_contents = undef, # If left undefined puppet will not create file.
+  $ssl_key_file_contents = undef, # If left undefined puppet will not create file.
+  $ssl_chain_file_contents = undef, # If left undefined puppet will not create file.
   $behind_proxy = false,
   $cgit_timeout = false,
   $manage_cgitrc = false,
@@ -92,7 +92,7 @@ class cgit(
   include ::httpd
 
   if ($::osfamily == 'RedHat') {
-    include cgit::selinux
+    include ::cgit::selinux
   }
 
   package { [
@@ -194,7 +194,7 @@ class cgit(
     subscribe => File['/etc/init.d/git-daemon'],
   }
 
-  if $ssl_cert_file_contents != '' {
+  if $ssl_cert_file_contents != undef {
     file { $ssl_cert_file:
       owner   => 'root',
       group   => 'root',
@@ -204,7 +204,7 @@ class cgit(
     }
   }
 
-  if $ssl_key_file_contents != '' {
+  if $ssl_key_file_contents != undef {
     file { $ssl_key_file:
       owner   => 'root',
       group   => 'root',
@@ -214,7 +214,7 @@ class cgit(
     }
   }
 
-  if $ssl_chain_file_contents != '' {
+  if $ssl_chain_file_contents != undef {
     file { $ssl_chain_file:
       owner   => 'root',
       group   => 'root',
