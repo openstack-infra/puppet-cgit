@@ -99,8 +99,8 @@ KeepAliveTimeout 15
 # MaxClients: maximum number of server processes allowed to start
 # MaxRequestsPerChild: maximum number of requests a server process serves
 <IfModule prefork.c>
-<% final_prefork_settings.keys.sort.each do |setting| -%>
-<%= setting -%> <%= final_prefork_settings[setting] %>
+<% @final_prefork_settings.keys.sort.each do |setting| -%>
+<%= setting -%> <%= @final_prefork_settings[setting] %>
 <% end -%>
 </IfModule>
 
@@ -112,8 +112,8 @@ KeepAliveTimeout 15
 # ThreadsPerChild: constant number of worker threads in each server process
 # MaxRequestsPerChild: maximum number of requests a server process serves
 <IfModule worker.c>
-<% final_mpm_settings.keys.sort.each do |setting| -%>
-<%= setting -%> <%= final_mpm_settings[setting] %>
+<% @final_mpm_settings.keys.sort.each do |setting| -%>
+<%= setting -%> <%= @final_mpm_settings[setting] %>
 <% end -%>
 </IfModule>
 
