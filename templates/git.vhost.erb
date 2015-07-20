@@ -68,7 +68,10 @@
 
   SSLCertificateFile      <%= scope.lookupvar("cgit::ssl_cert_file") %>
   SSLCertificateKeyFile   <%= scope.lookupvar("cgit::ssl_key_file") %>
-<% if scope.lookupvar("cgit::ssl_chain_file") != "" %>
+<%# The original default was '' -%>
+<%# scope.lookupvar returns nil for an undefined variable in puppet 4 -%>
+<%# scope.lookupvar returns :undef for an undefined variable in puppet 3 -%>
+<% unless ['', nil, :undef].include?(scope.lookupvar("cgit::ssl_chain_file")) %>
   SSLCertificateChainFile <%= scope.lookupvar("cgit::ssl_chain_file") %>
 <% end %>
 </VirtualHost>
