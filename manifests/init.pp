@@ -56,7 +56,7 @@ class cgit(
     'cache-dynamic-ttl'   => 1,
     'cache-repo-ttl'      => 1,
     'cache-root-ttl'      => 1,
-    'clone-prefix'        => '',
+    'clone-prefix'        => "git://${::fqdn} https://${::fqdn}",
     'enable-index-owner'  => 0,
     'enable-index-links'  => 1,
     'enable-http-clone'   => 0,
