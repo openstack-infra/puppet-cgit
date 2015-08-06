@@ -2,6 +2,6 @@
 # See cgitrc(5) or /usr/share/doc/cgit-*/cgitrc.5.html for details
 #
 
-<% final_cgitrc_settings.keys.sort.each do |setting| -%>
-<%= setting -%>=<%= final_cgitrc_settings[setting] %>
+<% @final_cgitrc_settings.keys.sort.each do |setting| -%>
+<%= setting -%>=<%= @final_cgitrc_settings[setting] %>
 <% end -%>
