@@ -35,7 +35,7 @@ class cgit::lb (
     ensure => present,
   }
 
-  class { 'haproxy':
+  class { '::haproxy':
     enable         => true,
     global_options => {
       'log'     => '127.0.0.1 local0',
