@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-group :development, :test do
+group :development, :unit_tests do
   gem 'puppetlabs_spec_helper', :require => false
 
   gem 'metadata-json-lint'
@@ -18,13 +18,16 @@ group :development, :test do
   gem 'puppet-lint-variable_contains_upcase'
   gem 'puppet-lint-spaceship_operator_without_tag-check'
   gem 'puppet-lint-undef_in_function-check'
+end
 
-  if puppetversion = ENV['PUPPET_GEM_VERSION']
-    gem 'puppet', puppetversion, :require => false
-  else
-    gem 'puppet', '~> 3.0', :require => false
-  end
+group :system_tests do
+  gem 'beaker-rspec', :require => false
+end
 
+if puppetversion = ENV['PUPPET_GEM_VERSION']
+  gem 'puppet', puppetversion, :require => false
+else
+  gem 'puppet', '~> 3.0', :require => false
 end
 
 # vim:ft=ruby
