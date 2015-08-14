@@ -49,8 +49,21 @@ class cgit::lb (
     },
   }
   # The three listen defines here are what the world will hit.
+  if $::ipaddress {
+    $start_ipaddress = [$::ipaddress]
+  }
+  else {
+    $start_ipaddress = []
+  }
+  if $::ipaddress6 {
+    $haproxy_addresses = concat($start_ipaddress, $::ipaddress6)
+  }
+  else {
+    $haproxy_addresses = $start_ipaddress
+  }
+
   haproxy::listen { 'balance_git_http':
-    ipaddress        => [$::ipaddress, $::ipaddress6],
+    ipaddress        => $haproxy_addresses,
     ports            => ['80'],
     mode             => 'tcp',
     collect_exported => false,
@@ -62,7 +75,7 @@ class cgit::lb (
     },
   }
   haproxy::listen { 'balance_git_https':
-    ipaddress        => [$::ipaddress, $::ipaddress6],
+    ipaddress        => $haproxy_addresses,
     ports            => ['443'],
     mode             => 'tcp',
     collect_exported => false,
@@ -74,7 +87,7 @@ class cgit::lb (
     },
   }
   haproxy::listen { 'balance_git_daemon':
-    ipaddress        => [$::ipaddress, $::ipaddress6],
+    ipaddress        => $haproxy_addresses,
     ports            => ['9418'],
     mode             => 'tcp',
     collect_exported => false,
