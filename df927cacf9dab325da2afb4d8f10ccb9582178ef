@@ -1,0 +1,9 @@
+Verified+2: Jenkins
+Code-Review+2: yolanda.robla <info@ysoft.biz>
+Workflow+1: yolanda.robla <info@ysoft.biz>
+Code-Review+2: Spencer Krum <nibz@spencerkrum.com>
+Submitted-by: Jenkins
+Submitted-at: Fri, 14 Aug 2015 08:21:22 +0000
+Reviewed-on: https://review.openstack.org/211829
+Project: openstack-infra/puppet-cgit
+Branch: refs/heads/master
