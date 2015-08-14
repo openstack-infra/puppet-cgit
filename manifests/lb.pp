@@ -49,8 +49,10 @@ class cgit::lb (
     },
   }
   # The three listen defines here are what the world will hit.
+  $haproxy_addresses = delete_undef_values([$::ipaddress, $::ipaddress6])
+
   haproxy::listen { 'balance_git_http':
-    ipaddress        => [$::ipaddress, $::ipaddress6],
+    ipaddress        => $haproxy_addresses,
     ports            => ['80'],
     mode             => 'tcp',
     collect_exported => false,
@@ -62,7 +64,7 @@ class cgit::lb (
     },
   }
   haproxy::listen { 'balance_git_https':
-    ipaddress        => [$::ipaddress, $::ipaddress6],
+    ipaddress        => $haproxy_addresses,
     ports            => ['443'],
     mode             => 'tcp',
     collect_exported => false,
@@ -74,7 +76,7 @@ class cgit::lb (
     },
   }
   haproxy::listen { 'balance_git_daemon':
-    ipaddress        => [$::ipaddress, $::ipaddress6],
+    ipaddress        => $haproxy_addresses,
     ports            => ['9418'],
     mode             => 'tcp',
     collect_exported => false,
