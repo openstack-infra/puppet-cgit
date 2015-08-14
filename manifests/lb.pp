@@ -20,6 +20,51 @@ class cgit::lb (
   $balancer_member_http_ports = ['8080',],
   $balancer_member_https_ports = ['4443',],
   $balancer_member_git_ports = ['29418',],
+  $global_options = {
+    'log'     => '127.0.0.1 local0',
+    'chroot'  => '/var/lib/haproxy',
+    'pidfile' => '/var/run/haproxy.pid',
+    'maxconn' => '4000',
+    'user'    => 'haproxy',
+    'group'   => 'haproxy',
+    'daemon'  => '',
+    'stats'   => 'socket /var/lib/haproxy/stats user root group root mode 0600 level admin'
+  },
+  $defaults_options = {
+    'log'     => 'global',
+    'stats'   => 'enable',
+    'option'  => 'redispatch',
+    'retries' => '3',
+    'timeout' => [
+      'http-request 10s',
+      'queue 1m',
+      'connect 10s',
+      'client 2m',
+      'server 2m',
+      'check 10s',
+    ],
+    'maxconn' => '8000',
+  },
+  $http_options = {
+    'balance' => 'leastconn',
+    'option'  => [
+      'tcplog',
+    ],
+  },
+  $https_options = {
+    'balance' => 'leastconn',
+    'option'  => [
+      'tcplog',
+    ],
+  },
+  $git_options = {
+    'maxconn' => '256',
+    'backlog' => '256',
+    'balance' => 'leastconn',
+    'option'  => [
+      'tcplog',
+    ],
+  },
 ) {
   if ($::osfamily == 'RedHat') {
     class { '::selinux':
@@ -36,17 +81,9 @@ class cgit::lb (
   }
 
   class { '::haproxy':
-    enable         => true,
-    global_options => {
-      'log'     => '127.0.0.1 local0',
-      'chroot'  => '/var/lib/haproxy',
-      'pidfile' => '/var/run/haproxy.pid',
-      'maxconn' => '4000',
-      'user'    => 'haproxy',
-      'group'   => 'haproxy',
-      'daemon'  => '',
-      'stats'   => 'socket /var/lib/haproxy/stats user root group root mode 0600 level admin'
-    },
+    enable           => true,
+    global_options   => $global_options,
+    defaults_options => $defaults_options,
   }
   # The three listen defines here are what the world will hit.
   haproxy::listen { 'balance_git_http':
@@ -54,38 +91,21 @@ class cgit::lb (
     ports            => ['80'],
     mode             => 'tcp',
     collect_exported => false,
-    options          => {
-      'balance' => 'source',
-      'option'  => [
-        'tcplog',
-      ],
-    },
+    options          => $http_options,
   }
   haproxy::listen { 'balance_git_https':
     ipaddress        => [$::ipaddress, $::ipaddress6],
     ports            => ['443'],
     mode             => 'tcp',
     collect_exported => false,
-    options          => {
-      'balance' => 'source',
-      'option'  => [
-        'tcplog',
-      ],
-    },
+    options          => $https_options,
   }
   haproxy::listen { 'balance_git_daemon':
     ipaddress        => [$::ipaddress, $::ipaddress6],
     ports            => ['9418'],
     mode             => 'tcp',
     collect_exported => false,
-    options          => {
-      'maxconn' => '32',
-      'backlog' => '64',
-      'balance' => 'source',
-      'option'  => [
-        'tcplog',
-      ],
-    },
+    options          => $git_options,
   }
   haproxy::balancermember { 'balance_git_http_member':
     listening_service => 'balance_git_http',
