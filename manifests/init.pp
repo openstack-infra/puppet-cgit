@@ -32,6 +32,7 @@ class cgit(
   $prefork_settings = {}, # override the prefork worker settings
   $mpm_settings = {}, # override the mpm worker settings
   $cgitrc_settings = {}
+  $selinux_mode => 'enforcing'
 ) {
   validate_hash($prefork_settings)
   validate_hash($mpm_settings)
@@ -92,7 +93,12 @@ class cgit(
   include ::httpd
 
   if ($::osfamily == 'RedHat') {
-    include ::cgit::selinux
+    class { '::selinux':
+        mode => $selinux_mode
+    }
+    if $selinux_mode != "disabled" {
+        include cgit::selinux
+    }
   }
 
   package { [

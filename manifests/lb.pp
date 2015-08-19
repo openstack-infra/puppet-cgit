@@ -20,10 +20,11 @@ class cgit::lb (
   $balancer_member_http_ports = ['8080',],
   $balancer_member_https_ports = ['4443',],
   $balancer_member_git_ports = ['29418',],
+  $selinux_mode => 'enforcing'
 ) {
   if ($::osfamily == 'RedHat') {
     class { '::selinux':
-      mode => 'enforcing'
+      mode => $selinux_mode
     }
   }
 
