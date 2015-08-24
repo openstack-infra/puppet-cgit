@@ -45,5 +45,14 @@ class cgit::selinux {
     subscribe   => File['/etc/httpd/conf.d/ssl.conf'],
     refreshonly => true,
   }
+
+  exec { 'cgit_allow_gitdaemon_port':
+    # If we cannot add the rule modify the existing rule.
+    onlyif      => "bash -c \'! semanage port -a -t gitdaemon_port_t -p tcp ${::cgit::daemon_port}\'",
+    command     => "semanage port -m -t gitdaemon_port_t -p tcp ${::cgit::daemon_port}",
+    path        => '/bin:/usr/sbin',
+    subscribe   => File['/etc/init.d/git-daemon'],
+    refreshonly => true,
+  }
 }
 
