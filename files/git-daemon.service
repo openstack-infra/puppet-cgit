@@ -1,0 +1,9 @@
+[Unit]
+Description=Git Repositories Server Daemon
+Documentation=man:git-daemon(1)
+Wants=git-daemon.socket
+
+[Service]
+User=nobody
+ExecStart=-/usr/libexec/git-core/git-daemon --base-path=/var/lib/git --export-all --syslog --inetd --verbose /var/lib/git
+StandardInput=socket
