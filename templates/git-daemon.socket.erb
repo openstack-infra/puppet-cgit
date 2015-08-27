@@ -1,0 +1,9 @@
+[Unit]
+Description=Git Activation Socket
+
+[Socket]
+ListenStream=<%= scope.lookupvar("cgit::daemon_port") %>
+Accept=true
+
+[Install]
+WantedBy=sockets.target
