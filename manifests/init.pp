@@ -91,10 +91,6 @@ class cgit(
 
   include ::httpd
 
-  if ($::osfamily == 'RedHat') {
-    include ::cgit::selinux
-  }
-
   package { [
       'cgit',
       'git-daemon',
@@ -195,18 +191,44 @@ class cgit(
     require => File[$cgitdir],
   }
 
-  file { '/etc/init.d/git-daemon':
-    ensure  => present,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
-    content => template('cgit/git-daemon.init.erb'),
+  if ($::osfamily == 'RedHat' and $::operatingsystemmajrelease >= '7') {
+    $git_daemon_service_name = 'git-daemon.socket'
+    file { '/usr/lib/systemd/system/git-daemon.socket':
+      ensure  => present,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      content => template('cgit/git-daemon.socket.erb'),
+    }
+    file { 'git-daemon-init-script':
+      ensure    => present,
+      path      => '/usr/lib/systemd/system/git-daemon@.service',
+      owner     => 'root',
+      group     => 'root',
+      mode      => '0644',
+      source    => 'puppet:///modules/cgit/git-daemon.service',
+      subscribe => File['/usr/lib/systemd/system/git-daemon.socket'],
+    }
+  } else {
+    $git_daemon_service_name = 'git-daemon'
+    file { 'git-daemon-init-script':
+      ensure  => present,
+      path    => '/etc/init.d/git-daemon',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0755',
+      content => template('cgit/git-daemon.init.erb'),
+    }
   }
 
-  service { 'git-daemon':
+  service { $git_daemon_service_name:
     ensure    => running,
     enable    => true,
-    subscribe => File['/etc/init.d/git-daemon'],
+    subscribe => File['git-daemon-init-script'],
+  }
+
+  if ($::osfamily == 'RedHat') {
+    include ::cgit::selinux
   }
 
   if $ssl_cert_file_contents != undef {
