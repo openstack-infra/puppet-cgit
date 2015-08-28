@@ -1,0 +1,9 @@
+Verified+2: Jenkins
+Code-Review+2: Jeremy Stanley <fungi@yuggoth.org>
+Workflow+1: Jeremy Stanley <fungi@yuggoth.org>
+Code-Review+2: yolanda.robla <info@ysoft.biz>
+Submitted-by: Jenkins
+Submitted-at: Fri, 28 Aug 2015 16:32:46 +0000
+Reviewed-on: https://review.openstack.org/199798
+Project: openstack-infra/puppet-cgit
+Branch: refs/heads/master
