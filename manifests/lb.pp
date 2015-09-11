@@ -48,9 +48,12 @@ class cgit::lb (
       'stats'   => 'socket /var/lib/haproxy/stats user root group root mode 0600 level admin'
     },
   }
+
+  $ipaddresses = delete_undef_values([$::ipaddress, $::ipaddress6])
+
   # The three listen defines here are what the world will hit.
   haproxy::listen { 'balance_git_http':
-    ipaddress        => [$::ipaddress, $::ipaddress6],
+    ipaddress        => $ipaddresses,
     ports            => ['80'],
     mode             => 'tcp',
     collect_exported => false,
@@ -62,7 +65,7 @@ class cgit::lb (
     },
   }
   haproxy::listen { 'balance_git_https':
-    ipaddress        => [$::ipaddress, $::ipaddress6],
+    ipaddress        => $ipaddresses,
     ports            => ['443'],
     mode             => 'tcp',
     collect_exported => false,
@@ -74,7 +77,7 @@ class cgit::lb (
     },
   }
   haproxy::listen { 'balance_git_daemon':
-    ipaddress        => [$::ipaddress, $::ipaddress6],
+    ipaddress        => $ipaddresses,
     ports            => ['9418'],
     mode             => 'tcp',
     collect_exported => false,
@@ -105,6 +108,11 @@ class cgit::lb (
     ipaddresses       => $balancer_member_ips,
     ports             => $balancer_member_git_ports,
     options           => 'maxqueue 512',
+  }
+
+  service { 'rsyslog':
+    ensure    => running,
+    enable    => true,
   }
 
   file { '/etc/rsyslog.d/haproxy.conf':
