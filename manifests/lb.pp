@@ -48,6 +48,7 @@ class cgit::lb (
       'stats'   => 'socket /var/lib/haproxy/stats user root group root mode 0600 level admin'
     },
   }
+
   # The three listen defines here are what the world will hit.
   $haproxy_addresses = delete_undef_values([$::ipaddress, $::ipaddress6])
 
@@ -107,6 +108,13 @@ class cgit::lb (
     ipaddresses       => $balancer_member_ips,
     ports             => $balancer_member_git_ports,
     options           => 'maxqueue 512',
+  }
+
+  if (!defined(Service['rsyslog'])) {
+    service { 'rsyslog':
+      ensure => running,
+      enable => true,
+    }
   }
 
   file { '/etc/rsyslog.d/haproxy.conf':
