@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family]) do
+describe 'puppet-cgit module begind proxy', :if => ['fedora', 'redhat'].include?(os[:family]) do
   def pp_path
     base_path = File.dirname(__FILE__)
     File.join(base_path, 'fixtures')
@@ -11,8 +11,8 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
     File.read(module_path)
   end
 
-  def default_puppet_module
-    module_path = File.join(pp_path, 'default.pp')
+  def behindproxy_puppet_module
+    module_path = File.join(pp_path, 'behindproxy.pp')
     File.read(module_path)
   end
 
@@ -21,32 +21,32 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
   end
 
   it 'should work with no errors' do
-    apply_manifest(default_puppet_module, catch_failures: true)
+    apply_manifest(behindproxy_puppet_module, catch_failures: true)
   end
 
   it 'should be idempotent' do
-    apply_manifest(default_puppet_module, catch_changes: true)
+    apply_manifest(behindproxy_puppet_module, catch_changes: true)
   end
 
-  describe 'cgit server' do
+  describe 'required services' do
     describe 'running web server' do
-      describe command('curl http://localhost/cgit') do
+      describe command('curl http://localhost:8080/cgit') do
         its(:stdout) { should include 'OpenStack git repository browser' }
       end
 
-      describe command('curl --insecure https://localhost/cgit') do
+      describe command('curl --insecure https://localhost:4443/cgit') do
         its(:stdout) { should include 'OpenStack git repository browser' }
       end
 
-      describe port(80) do
+      describe port(8080) do
         it { should be_listening }
       end
 
-      describe port(443) do
+      describe port(4443) do
         it { should be_listening }
       end
 
-      describe port(9418) do
+      describe port(29418) do
         it { should be_listening }
       end
 
@@ -86,6 +86,7 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
       it { should exist }
     end
   end
+
   describe 'required os packages' do
     required_packages = [
       package('mod_ldap'),
@@ -132,7 +133,7 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
       it { should be_file }
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
-      its(:content) { should include 'ListenStream=9418' }
+      its(:content) { should include 'ListenStream=29418' }
     end
 
     describe file('/usr/lib/systemd/system/git-daemon@.service'), :if => ['fedora', 'redhat'].include?(os[:family]) && os[:release] >= '7' do
@@ -147,7 +148,7 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
       its(:content) { should include 'DAEMON=/usr/libexec/git-core/git-daemon' }
-      its(:content) { should include 'PORT=9418' }
+      its(:content) { should include 'PORT=29418' }
     end
 
     describe file('/etc/pki/tls/certs/localhost.pem') do
@@ -180,14 +181,14 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
       it { should be_file }
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
-      its(:content) { should include 'Listen 80' }
+      its(:content) { should include 'Listen 8080' }
     end
 
     describe file('/etc/httpd/conf.d/ssl.conf') do
       it { should be_file }
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
-      its(:content) { should include 'Listen 443' }
+      its(:content) { should include 'Listen 4443' }
     end
   end
 end
