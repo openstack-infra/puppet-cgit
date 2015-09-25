@@ -191,4 +191,19 @@ describe 'puppet-cgit module begind proxy', :if => ['fedora', 'redhat'].include?
       its(:content) { should include 'Listen 4443' }
     end
   end
+
+  describe 'selinux' do
+    it 'should allow port 8080 and 4443' do
+      shell("semanage port -l | grep '^http_port_t'") do |r|
+        expect(r.stdout).to match(/^http_port_t.*\b8080,/)
+        expect(r.stdout).to match(/^http_port_t.*\b4443,/)
+      end
+    end
+
+    it 'should allow port 29418' do
+      shell("semanage port -l | grep '^git_port_t'") do |r|
+        expect(r.stdout).to match(/^git_port_t.*\b29418,/)
+      end
+    end
+  end
 end

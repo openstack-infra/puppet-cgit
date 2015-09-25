@@ -190,4 +190,25 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
       its(:content) { should include 'Listen 443' }
     end
   end
+
+  describe 'selinux' do
+    it 'should have the httpd_enable_cgi boolean turned on' do
+      shell("semanage boolean -l | grep '^httpd_enable_cgi'") do |r|
+        expect(r.stdout).to match(/^httpd_enable_cgi.*\(on   ,   on\)/)
+      end
+    end
+
+    it 'should allow port 80 and 443' do
+      shell("semanage port -l | grep '^http_port_t'") do |r|
+        expect(r.stdout).to match(/^http_port_t.*\b80,/)
+        expect(r.stdout).to match(/^http_port_t.*\b443,/)
+      end
+    end
+
+    it 'should allow port 9418' do
+      shell("semanage port -l | grep '^git_port_t'") do |r|
+        expect(r.stdout).to match(/^git_port_t.*\b9418,/)
+      end
+    end
+  end
 end
