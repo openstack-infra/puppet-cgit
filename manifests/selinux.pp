@@ -52,7 +52,10 @@ class cgit::selinux {
     command     => "semanage port -m -t git_port_t -p tcp ${::cgit::daemon_port}",
     path        => '/bin:/usr/sbin',
     before      => Service[$::cgit::git_daemon_service_name],
-    subscribe   => File['git-daemon-init-script'],
+    subscribe   => [
+      File['git-daemon-init-script'],
+      File['/usr/lib/systemd/system/git-daemon.socket'],
+    ],
     refreshonly => true,
   }
 }

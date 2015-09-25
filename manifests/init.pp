@@ -201,13 +201,13 @@ class cgit(
       content => template('cgit/git-daemon.socket.erb'),
     }
     file { 'git-daemon-init-script':
-      ensure    => present,
-      path      => '/usr/lib/systemd/system/git-daemon@.service',
-      owner     => 'root',
-      group     => 'root',
-      mode      => '0644',
-      source    => 'puppet:///modules/cgit/git-daemon.service',
-      subscribe => File['/usr/lib/systemd/system/git-daemon.socket'],
+      ensure  => present,
+      path    => '/usr/lib/systemd/system/git-daemon@.service',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
+      source  => 'puppet:///modules/cgit/git-daemon.service',
+      require => File['/usr/lib/systemd/system/git-daemon.socket'],
     }
   } else {
     $git_daemon_service_name = 'git-daemon'
