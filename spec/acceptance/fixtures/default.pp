@@ -1,4 +1,10 @@
 if ($::osfamily == 'RedHat') {
+  exec { 'reload systemd to have ports updated':
+    command     => '/bin/systemctl daemon-reload',
+    refreshonly => true,
+    subscribe   => File['/usr/lib/systemd/system/git-daemon.socket'],
+  }
+
   class { '::cgit':
     vhost_name             => 'localhost',
     serveradmin            => 'webmaster@localhost',
@@ -11,16 +17,13 @@ if ($::osfamily == 'RedHat') {
       'clone-prefix' => 'git://git.openstack.org https://git.openstack.org',
       'root-title'   => 'OpenStack git repository browser',
     },
-  } -> class { '::cgit::ssh':
+  }
+
+  class { '::cgit::ssh':
     manage_home     => false,
+    require         => Class['::cgit'],
     authorized_keys => [
       'ssh-key 1a2b3c4d5e',
     ],
   }
-} elsif ($::osfamily == 'Debian') {
-  class { '::cgit::lb':
-    balancer_member_names => [ 'local' ],
-    balancer_member_ips   => [ '127.0.0.1' ],
-  }
 }
-

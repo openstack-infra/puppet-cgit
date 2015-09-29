@@ -4,11 +4,15 @@ if ($::osfamily == 'RedHat' and $::operatingsystemmajrelease == '7') {
     path    => '/usr/bin',
     command => 'mkdir -p /etc/ssl/certs',
     creates => '/etc/ssl/certs',
-  } -> exec { 'creates self-signed certificate key directory':
+  }
+
+  exec { 'creates self-signed certificate key directory':
     path    => '/usr/bin',
     command => 'mkdir -p /etc/ssl/private',
     creates => '/etc/ssl/private',
-  } -> exec { 'creates self-signed certificate':
+  }
+
+  exec { 'creates self-signed certificate':
     path    => '/usr/bin',
     command => 'openssl req \
                         -new \
@@ -19,7 +23,11 @@ if ($::osfamily == 'RedHat' and $::operatingsystemmajrelease == '7') {
                         -subj "/C=US/ST=California/L=San Francisco/O=Dis/CN=localhost" \
                         -keyout /etc/ssl/private/ssl-cert-snakeoil.key \
                         -out /etc/ssl/certs/ssl-cert-snakeoil.pem',
-    creates => ['/etc/ssl/certs/cgit.key', '/etc/cgit/ssl/cgit.crt'],
+    creates => ['/etc/ssl/private/ssl-cert-snakeoil.key', '/etc/ssl/certs/ssl-cert-snakeoil.pem'],
+    require => [
+      Exec['creates self-signed certificate directory'],
+      Exec['creates self-signed certificate key directory'],
+    ],
   }
 
   package { 'policycoreutils-python':
