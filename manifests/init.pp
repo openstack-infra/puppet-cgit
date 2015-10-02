@@ -121,12 +121,20 @@ class cgit(
     require => User['cgit'],
   }
 
-  file { '/var/lib/git':
+  $local_git_dir = '/var/lib/git'
+
+  file { $local_git_dir:
     ensure  => directory,
     owner   => 'cgit',
     group   => 'cgit',
     mode    => '0644',
     require => User['cgit'],
+  }
+
+  file { "${local_git_dir}/p":
+    ensure  => link,
+    target  => $local_git_dir,
+    require => File[$local_git_dir],
   }
 
   ::httpd::vhost { $vhost_name:
