@@ -105,6 +105,7 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
     required_directories = [
       file('/home/cgit'),
       file('/var/lib/git'),
+      file('/var/lib/git/p'),
     ]
 
     required_directories.each do |directory|
