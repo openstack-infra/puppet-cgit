@@ -128,6 +128,10 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
       end
     end
 
+    describe file('/var/lib/git/p') do
+      it { should be_linked_to '/var/lib/git' }
+    end
+
     describe file('/usr/lib/systemd/system/git-daemon.socket'), :if => ['fedora', 'redhat'].include?(os[:family]) && os[:release] >= '7' do
       it { should be_file }
       it { should be_owned_by 'root' }
