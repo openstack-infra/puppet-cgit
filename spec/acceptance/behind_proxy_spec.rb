@@ -194,12 +194,12 @@ describe 'puppet-cgit module begind proxy', :if => ['fedora', 'redhat'].include?
 
   describe 'selinux' do
     describe command("semanage port -l | grep '^http_port_t'") do
-      its(:stdout) { should match(/^http_port_t.*\b8080,/) }
-      its(:stdout) { should match(/^http_port_t.*\b4443,/) }
+      its(:stdout) { should match(/^http_port_t.*\b8080/) }
+      its(:stdout) { should match(/^http_port_t.*\b4443/) }
     end
 
     describe command("semanage port -l | grep '^git_port_t'") do
-      its(:stdout) { should match(/^git_port_t.*\b29418,/) }
+      its(:stdout) { should match(/^git_port_t.*\b29418/) }
     end
   end
 end

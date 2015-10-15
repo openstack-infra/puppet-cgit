@@ -197,12 +197,12 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
     end
 
     describe command("semanage port -l | grep '^http_port_t'") do
-      its (:stdout) { should match(/^http_port_t.*\b80,/) }
-      its (:stdout) { should match(/^http_port_t.*\b443,/) }
+      its (:stdout) { should match(/^http_port_t.*\b80/) }
+      its (:stdout) { should match(/^http_port_t.*\b443/) }
     end
 
     describe command("semanage port -l | grep '^git_port_t'") do
-      its(:stdout) { should match(/^git_port_t.*\b9418,/) }
+      its(:stdout) { should match(/^git_port_t.*\b9418/) }
     end
   end
 end
