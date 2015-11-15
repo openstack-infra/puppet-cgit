@@ -21,11 +21,6 @@ class cgit::lb (
   $balancer_member_https_ports = ['4443',],
   $balancer_member_git_ports = ['29418',],
 ) {
-  if ($::osfamily == 'RedHat') {
-    class { '::selinux':
-      mode => 'enforcing'
-    }
-  }
 
   package { 'socat':
     ensure => present,
