@@ -28,28 +28,26 @@ class cgit::selinux {
   }
 
   exec { 'cgit_allow_http_port':
-    # If we cannot add the rule modify the existing rule.
-    onlyif      => "bash -c \'! semanage port -a -t http_port_t -p tcp ${::cgit::http_port}\'",
-    command     => "semanage port -m -t http_port_t -p tcp ${::cgit::http_port}",
-    path        => '/bin:/usr/sbin',
-    before      => Service['httpd'],
-    subscribe   => File['/etc/httpd/conf/httpd.conf'],
-    refreshonly => true,
+    unless    => "semanage port -l | grep \'http_port_t.*tcp.*${::cgit::http_port}\'",
+    command   => "semanage port -a -t http_port_t -p tcp ${::cgit::http_port} \
+                  || semanage port -m -t http_port_t -p tcp ${::cgit::http_port}",
+    path      => '/bin:/usr/sbin',
+    before    => Service['httpd'],
+    subscribe => File['/etc/httpd/conf/httpd.conf'],
   }
 
   exec { 'cgit_allow_https_port':
-    # If we cannot add the rule modify the existing rule.
-    onlyif      => "bash -c \'! semanage port -a -t http_port_t -p tcp ${::cgit::https_port}\'",
-    command     => "semanage port -m -t http_port_t -p tcp ${::cgit::https_port}",
-    path        => '/bin:/usr/sbin',
-    subscribe   => File['/etc/httpd/conf.d/ssl.conf'],
-    refreshonly => true,
+    unless    => "semanage port -l | grep \'http_port_t.*tcp.*${::cgit::https_port}\'",
+    command   => "semanage port -a -t http_port_t -p tcp ${::cgit::https_port} \
+                  || semanage port -m -t http_port_t -p tcp ${::cgit::https_port}",
+    path      => '/bin:/usr/sbin',
+    subscribe => File['/etc/httpd/conf.d/ssl.conf'],
   }
 
   exec { 'cgit_allow_git_daemon_port':
-    # If we cannot add the rule modify the existing rule.
-    onlyif      => "bash -c \'! semanage port -a -t git_port_t -p tcp ${::cgit::daemon_port}\'",
-    command     => "semanage port -m -t git_port_t -p tcp ${::cgit::daemon_port}",
+    unless      => "semanage port -l | grep \'git_port_t.*tcp.*${::cgit::daemon_port}\'",
+    command     => "semanage port -a -t git_port_t -p tcp ${::cgit::daemon_port} \
+                    || semanage port -m -t git_port_t -p tcp ${::cgit::daemon_port}",
     path        => '/bin:/usr/sbin',
     before      => Service[$::cgit::git_daemon_service_name],
     subscribe   => [
