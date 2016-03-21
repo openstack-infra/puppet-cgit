@@ -15,22 +15,12 @@
 # Class: cgit::lb
 #
 class cgit::lb (
-  $balancer_member_names = [],
-  $balancer_member_ips = [],
-  $balancer_member_http_ports = ['8080',],
+  $balancer_member_git_ports   = ['29418',],
+  $balancer_member_http_ports  = ['8080',],
   $balancer_member_https_ports = ['4443',],
-  $balancer_member_git_ports = ['29418',],
-  $global_options = {
-    'log'     => '127.0.0.1 local0',
-    'chroot'  => '/var/lib/haproxy',
-    'pidfile' => '/var/run/haproxy.pid',
-    'maxconn' => '4000',
-    'user'    => 'haproxy',
-    'group'   => 'haproxy',
-    'daemon'  => '',
-    'stats'   => 'socket /var/lib/haproxy/stats user root group root mode 0600 level admin'
-  },
-  $defaults_options = {
+  $balancer_member_ips         = [],
+  $balancer_member_names       = [],
+  $defaults_options            = {
     'log'     => 'global',
     'stats'   => 'enable',
     'option'  => 'redispatch',
@@ -45,21 +35,31 @@ class cgit::lb (
     ],
     'maxconn' => '8000',
   },
-  $http_options = {
-    'balance' => 'leastconn',
-    'option'  => [
-      'tcplog',
-    ],
-  },
-  $https_options = {
-    'balance' => 'leastconn',
-    'option'  => [
-      'tcplog',
-    ],
-  },
-  $git_options = {
+  $git_options                 = {
     'maxconn' => '256',
     'backlog' => '256',
+    'balance' => 'leastconn',
+    'option'  => [
+      'tcplog',
+    ],
+  },
+  $global_options              = {
+    'log'     => '127.0.0.1 local0',
+    'chroot'  => '/var/lib/haproxy',
+    'pidfile' => '/var/run/haproxy.pid',
+    'maxconn' => '4000',
+    'user'    => 'haproxy',
+    'group'   => 'haproxy',
+    'daemon'  => '',
+    'stats'   => 'socket /var/lib/haproxy/stats user root group root mode 0600 level admin'
+  },
+  $http_options                = {
+    'balance' => 'leastconn',
+    'option'  => [
+      'tcplog',
+    ],
+  },
+  $https_options               = {
     'balance' => 'leastconn',
     'option'  => [
       'tcplog',

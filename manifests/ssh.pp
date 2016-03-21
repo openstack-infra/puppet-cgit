@@ -35,14 +35,14 @@
 #     Array with the list of keys that will be used for authorizing git
 #     clones over ssh
 class cgit::ssh (
-  $user = 'git',
-  $group = 'git',
-  $manage_group = true,
-  $home = '/var/lib/git',
-  $manage_home = true,
-  $target = undef,
-  $target_name = 'repo',
   $authorized_keys = [],
+  $group           = 'git',
+  $home            = '/var/lib/git',
+  $manage_group    = true,
+  $manage_home     = true,
+  $target          = undef,
+  $target_name     = 'repo',
+  $user            = 'git',
 ) {
 
   if $manage_home {

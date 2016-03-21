@@ -15,24 +15,24 @@
 # Class: cgit
 #
 class cgit(
-  $vhost_name = $::fqdn,
-  $serveradmin = "webmaster@${::fqdn}",
-  $serveraliases = undef,
-  $cgitdir = '/var/www/cgit',
-  $staticfiles = '/var/www/cgit/static',
-  $ssl_cert_file = undef,
-  $ssl_key_file = undef,
-  $ssl_chain_file = undef,
-  $ssl_cert_file_contents = undef, # If left undefined puppet will not create file.
-  $ssl_key_file_contents = undef, # If left undefined puppet will not create file.
+  $behind_proxy            = false,
+  $cgit_timeout            = false,
+  $cgitdir                 = '/var/www/cgit',
+  $cgitrc_settings         = {},
+  $manage_cgitrc           = false,
+  $mpm_settings            = {}, # override the mpm worker settings
+  $prefork_settings        = {}, # override the prefork worker settings
+  $selinux_mode            = 'enforcing',
+  $serveradmin             = "webmaster@${::fqdn}",
+  $serveraliases           = undef,
+  $ssl_cert_file           = undef,
+  $ssl_cert_file_contents  = undef, # If left undefined puppet will not create file.
+  $ssl_chain_file          = undef,
   $ssl_chain_file_contents = undef, # If left undefined puppet will not create file.
-  $behind_proxy = false,
-  $cgit_timeout = false,
-  $manage_cgitrc = false,
-  $prefork_settings = {}, # override the prefork worker settings
-  $mpm_settings = {}, # override the mpm worker settings
-  $cgitrc_settings = {},
-  $selinux_mode = 'enforcing'
+  $ssl_key_file            = undef,
+  $ssl_key_file_contents   = undef, # If left undefined puppet will not create file.
+  $staticfiles             = '/var/www/cgit/static',
+  $vhost_name              = $::fqdn,
 ) {
   validate_hash($prefork_settings)
   validate_hash($mpm_settings)
