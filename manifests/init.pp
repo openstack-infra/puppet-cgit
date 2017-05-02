@@ -93,11 +93,14 @@ class cgit(
   include ::httpd
 
   package { [
-      'cgit',
       'git-daemon',
       'highlight',
     ]:
     ensure => present,
+  }
+  package { 'cgit':
+    ensure          => present,
+    install_options => ['--enablerepo', 'epel'],
   }
 
   user { 'cgit':
