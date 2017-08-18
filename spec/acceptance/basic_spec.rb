@@ -1,4 +1,4 @@
-require 'spec_helper_acceptance'
+require 'puppet-openstack_infra_spec_helper/spec_helper_acceptance'
 
 describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family]) do
   def pp_path
