@@ -15,13 +15,6 @@
 # Class: cgit::selinux
 #
 class cgit::selinux {
-  exec { 'restorecon -R -v /var/lib/git':
-    path        => '/sbin',
-    require     => File['/var/lib/git'],
-    subscribe   => File['/var/lib/git'],
-    refreshonly => true,
-  }
-
   selboolean { 'httpd_enable_cgi':
     persistent => true,
     value      => on

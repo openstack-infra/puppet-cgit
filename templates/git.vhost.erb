@@ -1,6 +1,6 @@
-<VirtualHost *:<%= scope.lookupvar("cgit::http_port") %>>
-  ServerName <%= scope.lookupvar("cgit::vhost_name") %>
-  ServerAdmin <%= scope.lookupvar("cgit::serveradmin") %>
+<VirtualHost *:<%= @http_port %>>
+  ServerName <%= @cgit_vhost_name %>
+  ServerAdmin <%= @serveradmin %>
 
 <% if @serveraliases.is_a? Array -%>
 <% @serveraliases.each do |name| -%><%= "  ServerAlias #{name}\n" %><% end -%>
@@ -10,22 +10,23 @@
 
   Alias /cgit-data /usr/share/cgit
   ScriptAlias /cgit /var/www/cgi-bin/cgit
-  Alias /static <%= scope.lookupvar("cgit::staticfiles") %>
+  Alias /static <%= @staticfiles %>
   RewriteEngine On
   RewriteRule ^/$ /cgit [R]
 
-  SetEnv GIT_PROJECT_ROOT /var/lib/git/
+  SetEnv GIT_PROJECT_ROOT <%= @local_git_dir %>
   SetEnv GIT_HTTP_EXPORT_ALL
   SetEnv GIT_NOTES_DISPLAY_REF refs/notes/*
+  SetEnv CGIT_CONFIG <%= @cgitrc_path %>
 
-  AliasMatch ^/(.*/objects/[0-9a-f]{2}/[0-9a-f]{38})$ /var/lib/git/$1
-  AliasMatch ^/(.*/objects/pack/pack-[0-9a-f]{40}.(pack|idx))$ /var/lib/git/$1
+  AliasMatch ^/(.*/objects/[0-9a-f]{2}/[0-9a-f]{38})$ <%= @local_git_dir %>/$1
+  AliasMatch ^/(.*/objects/pack/pack-[0-9a-f]{40}.(pack|idx))$ <%= @local_git_dir %>/$1
   ScriptAlias / /usr/libexec/git-core/git-http-backend/
 
   ErrorLog /var/log/httpd/git-error.log
 
-  <% if scope.lookupvar("cgit::cgit_timeout").is_a? Integer %>
-  Timeout <%= scope.lookupvar("cgit::cgit_timeout") %>
+  <% if @cgit_timeout.is_a? Integer %>
+  Timeout @cgit::cgit_timeout %>
   <% end %>
 
   LogLevel warn
@@ -33,9 +34,9 @@
   CustomLog /var/log/httpd/git-access.log combined
 </VirtualHost>
 
-<VirtualHost *:<%= scope.lookupvar("cgit::https_port") %>>
-  ServerName <%= scope.lookupvar("cgit::vhost_name") %>
-  ServerAdmin <%= scope.lookupvar("cgit::serveradmin") %>
+<VirtualHost *:<%= @https_port %>>
+  ServerName <%= @cgit_vhost_name %>
+  ServerAdmin <%= @serveradmin %>
 
 <% if @serveraliases.is_a? Array -%>
 <% @serveraliases.each do |name| -%><%= "  ServerAlias #{name}\n" %><% end -%>
@@ -45,16 +46,17 @@
 
   Alias /cgit-data /usr/share/cgit
   ScriptAlias /cgit /var/www/cgi-bin/cgit
-  Alias /static <%= scope.lookupvar("cgit::staticfiles") %>
+  Alias /static <%= @staticfiles %>
   RewriteEngine On
   RewriteRule ^/$ /cgit [R]
 
-  SetEnv GIT_PROJECT_ROOT /var/lib/git/
+  SetEnv GIT_PROJECT_ROOT <%= @local_git_dir %>
   SetEnv GIT_HTTP_EXPORT_ALL
   SetEnv GIT_NOTES_DISPLAY_REF refs/notes/*
+  SetEnv CGIT_CONFIG <%= @cgitrc_path %>
 
-  AliasMatch ^/(.*/objects/[0-9a-f]{2}/[0-9a-f]{38})$ /var/lib/git/$1
-  AliasMatch ^/(.*/objects/pack/pack-[0-9a-f]{40}.(pack|idx))$ /var/lib/git/$1
+  AliasMatch ^/(.*/objects/[0-9a-f]{2}/[0-9a-f]{38})$  <%= @local_git_dir %>/$1
+  AliasMatch ^/(.*/objects/pack/pack-[0-9a-f]{40}.(pack|idx))$ <%= @local_git_dir %>/$1
   ScriptAlias / /usr/libexec/git-core/git-http-backend/
 
   ErrorLog /var/log/httpd/git-error.log
@@ -66,12 +68,12 @@
   SSLEngine on
   SSLProtocol All -SSLv2 -SSLv3
 
-  SSLCertificateFile      <%= scope.lookupvar("cgit::ssl_cert_file") %>
-  SSLCertificateKeyFile   <%= scope.lookupvar("cgit::ssl_key_file") %>
+  SSLCertificateFile      <%= @ssl_cert_file %>
+  SSLCertificateKeyFile   <%= @ssl_key_file %>
 <%# The original default was '' -%>
 <%# scope.lookupvar returns nil for an undefined variable in puppet 4 -%>
 <%# scope.lookupvar returns :undef for an undefined variable in puppet 3 -%>
-<% unless ['', nil, :undef].include?(scope.lookupvar("cgit::ssl_chain_file")) %>
-  SSLCertificateChainFile <%= scope.lookupvar("cgit::ssl_chain_file") %>
+<% unless ['', nil, :undef].include?@ssl_chain_file %>
+  SSLCertificateChainFile <%= @ssl_chain_file %>
 <% end %>
 </VirtualHost>
