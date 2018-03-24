@@ -33,6 +33,7 @@ class cgit(
   $ssl_key_file_contents   = undef, # If left undefined puppet will not create file.
   $staticfiles             = '/var/www/cgit/static',
   $vhost_name              = $::fqdn,
+  $create_site             = true,
 ) {
   validate_hash($prefork_settings)
   validate_hash($mpm_settings)
@@ -52,43 +53,19 @@ class cgit(
     'ThreadsPerChild'     => 25,
     'MaxRequestsPerChild' => 0
   }
-  $default_cgitrc_settings = {
-    'cache-size'          => 1000,
-    'cache-dynamic-ttl'   => 1,
-    'cache-repo-ttl'      => 1,
-    'cache-root-ttl'      => 1,
-    'clone-prefix'        => "git://${::fqdn} https://${::fqdn}",
-    'enable-index-owner'  => 0,
-    'enable-index-links'  => 1,
-    'enable-http-clone'   => 0,
-    'max-stats'           => 'quarter',
-    'side-by-side-diffs'  => 1,
-    'mimetype.gif'        => 'image/gif',
-    'mimetype.html'       => 'text/html',
-    'mimetype.jpg'        => 'image/jpeg',
-    'mimetype.jpeg'       => 'image/jpeg',
-    'mimetype.pdf'        => 'application/pdf',
-    'mimetype.png'        => 'image/png',
-    'mimetype.svg'        => 'image/svg+xml',
-    'source-filter'       => '/usr/libexec/cgit/filters/syntax-highlighting.sh',
-    'max-repo-count'      => 600,
-    'include'             => '/etc/cgitrepos'
-  }
+  # merge settings with defaults
+  $final_mpm_settings = merge($default_mpm_settings, $mpm_settings)
+  $final_prefork_settings = merge($default_prefork_settings, $prefork_settings)
+
   if $behind_proxy == true {
     $http_port = 8080
     $https_port = 4443
     $daemon_port = 29418
-  }
-  else {
+  } else {
     $http_port = 80
     $https_port = 443
     $daemon_port = 9418
   }
-
-  # merge settings with defaults
-  $final_mpm_settings = merge($default_mpm_settings, $mpm_settings)
-  $final_prefork_settings = merge($default_prefork_settings, $prefork_settings)
-  $final_cgitrc_settings = merge($default_cgitrc_settings, $cgitrc_settings)
 
   include ::httpd
 
@@ -124,35 +101,6 @@ class cgit(
     require => User['cgit'],
   }
 
-  $local_git_dir = '/var/lib/git'
-
-  file { $local_git_dir:
-    ensure  => directory,
-    owner   => 'cgit',
-    group   => 'cgit',
-    mode    => '0644',
-    require => User['cgit'],
-  }
-
-  file { "${local_git_dir}/p":
-    ensure  => link,
-    target  => $local_git_dir,
-    require => File[$local_git_dir],
-  }
-
-  ::httpd::vhost { $vhost_name:
-    port          => $https_port,
-    serveraliases => $serveraliases,
-    docroot       => 'MEANINGLESS ARGUMENT',
-    priority      => '50',
-    template      => 'cgit/git.vhost.erb',
-    ssl           => true,
-    require       => [
-      File[$staticfiles],
-      Package['cgit'],
-    ],
-  }
-
   file { '/etc/httpd/conf/httpd.conf':
     ensure  => present,
     owner   => 'root',
@@ -185,22 +133,6 @@ class cgit(
     package { 'mod_ldap':
       ensure => present,
     }
-  }
-
-  file { $cgitdir:
-    ensure  => directory,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
-    require => Package['httpd']
-  }
-
-  file { $staticfiles:
-    ensure  => directory,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
-    require => File[$cgitdir],
   }
 
   if ($::osfamily == 'RedHat' and $::operatingsystemmajrelease >= '7') {
@@ -250,43 +182,24 @@ class cgit(
     }
   }
 
-  if $ssl_cert_file_contents != undef {
-    file { $ssl_cert_file:
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0640',
-      content => $ssl_cert_file_contents,
-      before  => Httpd::Vhost[$vhost_name],
+  if create_site {
+    cgit::site { 'default':
+      behind_proxy            => $behind_proxy,
+      cgit_timeout            => $cgit_timeout,
+      cgitdir                 => $cgitdir,
+      cgitrc_settings         => $cgitrc_settings,
+      manage_cgitrc           => $manage_cgitrc,
+      selinux_mode            => $selinux_mode,
+      serveradmin             => $serveradmin,
+      serveraliases           => $serveraliases,
+      ssl_cert_file           => $ssl_cert_file,
+      ssl_cert_file_contents  => $ssl_cert_file_contents,
+      ssl_chain_file          => $ssl_chain_file,
+      ssl_chain_file_contents => $ssl_chain_file_contents,
+      ssl_key_file            => $ssl_key_file,
+      ssl_key_file_contents   => $ssl_key_file_contents,
+      staticfiles             => $staticfiles,
+      cgit_vhost_name         => $vhost_name,
     }
   }
-
-  if $ssl_key_file_contents != undef {
-    file { $ssl_key_file:
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0640',
-      content => $ssl_key_file_contents,
-      before  => Httpd::Vhost[$vhost_name],
-    }
-  }
-
-  if $ssl_chain_file_contents != undef {
-    file { $ssl_chain_file:
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0640',
-      content => $ssl_chain_file_contents,
-      before  => Httpd::Vhost[$vhost_name],
-    }
-  }
-  if $manage_cgitrc {
-    file { '/etc/cgitrc':
-      ensure  => present,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0644',
-      content => template('cgit/cgitrc.erb')
-    }
-  }
-
 }
