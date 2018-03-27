@@ -2,10 +2,12 @@
   ServerName <%= @cgit_vhost_name %>
   ServerAdmin <%= @serveradmin %>
 
+<% unless ['', nil, :undef].include?@serveraliases %>
 <% if @serveraliases.is_a? Array -%>
 <% @serveraliases.each do |name| -%><%= "  ServerAlias #{name}\n" %><% end -%>
 <% elsif @serveraliases != '' -%>
 <%= "  ServerAlias #{@serveraliases}" -%>
+<% end -%>
 <% end -%>
 
   Alias /cgit-data /usr/share/cgit
@@ -23,25 +25,27 @@
   AliasMatch ^/(.*/objects/pack/pack-[0-9a-f]{40}.(pack|idx))$ <%= @local_git_dir %>/$1
   ScriptAlias / /usr/libexec/git-core/git-http-backend/
 
-  ErrorLog /var/log/httpd/git-error.log
+  ErrorLog /var/log/httpd/<%= @cgit_vhost_name %>-error.log
 
   <% if @cgit_timeout.is_a? Integer %>
-  Timeout @cgit::cgit_timeout %>
+  Timeout <%= @cgit_timeout %>
   <% end %>
 
   LogLevel warn
 
-  CustomLog /var/log/httpd/git-access.log combined
+  CustomLog /var/log/httpd/<%= @cgit_vhost_name %>-access.log combined
 </VirtualHost>
 
 <VirtualHost *:<%= @https_port %>>
   ServerName <%= @cgit_vhost_name %>
   ServerAdmin <%= @serveradmin %>
 
+<% unless ['', nil, :undef].include?@serveraliases %>
 <% if @serveraliases.is_a? Array -%>
 <% @serveraliases.each do |name| -%><%= "  ServerAlias #{name}\n" %><% end -%>
 <% elsif @serveraliases != '' -%>
 <%= "  ServerAlias #{@serveraliases}" -%>
+<% end -%>
 <% end -%>
 
   Alias /cgit-data /usr/share/cgit
@@ -59,11 +63,11 @@
   AliasMatch ^/(.*/objects/pack/pack-[0-9a-f]{40}.(pack|idx))$ <%= @local_git_dir %>/$1
   ScriptAlias / /usr/libexec/git-core/git-http-backend/
 
-  ErrorLog /var/log/httpd/git-error.log
+  ErrorLog /var/log/httpd/<%= @cgit_vhost_name %>-ssl-error.log
 
   LogLevel warn
 
-  CustomLog /var/log/httpd/git-access.log combined
+  CustomLog /var/log/httpd/<%= @cgit_vhost_name %>-ssl-access.log combined
 
   SSLEngine on
   SSLProtocol All -SSLv2 -SSLv3
