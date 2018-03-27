@@ -37,6 +37,7 @@ define cgit::site(
     'cache-dynamic-ttl'   => 1,
     'cache-repo-ttl'      => 1,
     'cache-root-ttl'      => 1,
+    'cache-root'          => "/var/cache/cgit/${cgit_vhost_name}",
     'clone-prefix'        => "git://${::fqdn} https://${::fqdn}",
     'enable-index-owner'  => 0,
     'enable-index-links'  => 1,
@@ -99,6 +100,14 @@ define cgit::site(
       File[$staticfiles],
       Package['cgit'],
     ],
+  }
+
+  file { "/var/cache/cgit/${cgit_vhost_name}":
+    ensure  => directory,
+    owner   => 'apache',
+    group   => 'root',
+    mode    => '0755',
+    require => Package['cgit']
   }
 
   file { $cgitdir:
