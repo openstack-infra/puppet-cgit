@@ -31,6 +31,7 @@ define cgit::site(
   $staticfiles             = '/var/www/cgit/static',
   $local_git_dir           = '/var/lib/git',
   $cgit_vhost_name         = $::fqdn,
+  $cgit_vhost_priority     = '50',
 ) {
   $default_cgitrc_settings = {
     'cache-size'          => 1000,
@@ -93,7 +94,7 @@ define cgit::site(
     port          => $https_port,
     serveraliases => $serveraliases,
     docroot       => 'MEANINGLESS ARGUMENT',
-    priority      => '50',
+    priority      => $cgit_vhost_priority,
     template      => 'cgit/git.vhost.erb',
     ssl           => true,
     require       => [

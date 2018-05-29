@@ -200,6 +200,9 @@ class cgit(
       ssl_key_file_contents   => $ssl_key_file_contents,
       staticfiles             => $staticfiles,
       cgit_vhost_name         => $vhost_name,
+      # Make default site have lower vhost priority for better compatibility
+      # with non SNI capable clients.
+      cgit_vhost_priority     => '25',
     }
   }
 }
