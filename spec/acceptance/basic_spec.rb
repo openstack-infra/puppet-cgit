@@ -193,6 +193,73 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
       it { should be_grouped_into 'root' }
       its(:content) { should include 'Listen 443' }
     end
+
+    vhost_content = '<VirtualHost *:80>
+  ServerName localhost
+  ServerAdmin webmaster@localhost
+
+
+  Alias /cgit-data /usr/share/cgit
+  ScriptAlias /cgit /var/www/cgi-bin/cgit
+  Alias /static /var/www/cgit/static
+  RewriteEngine On
+  RewriteRule ^/$ /cgit [R]
+
+  SetEnv GIT_PROJECT_ROOT /var/lib/git
+  SetEnv GIT_HTTP_EXPORT_ALL
+  SetEnv GIT_NOTES_DISPLAY_REF refs/notes/*
+  SetEnv CGIT_CONFIG /etc/cgitrc
+
+  AliasMatch ^/(.*/objects/[0-9a-f]{2}/[0-9a-f]{38})$ /var/lib/git/$1
+  AliasMatch ^/(.*/objects/pack/pack-[0-9a-f]{40}.(pack|idx))$ /var/lib/git/$1
+  ScriptAlias / /usr/libexec/git-core/git-http-backend/
+
+  ErrorLog /var/log/httpd/localhost-error.log
+
+  
+
+  LogLevel warn
+
+  CustomLog /var/log/httpd/localhost-access.log combined
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName localhost
+  ServerAdmin webmaster@localhost
+
+
+  Alias /cgit-data /usr/share/cgit
+  ScriptAlias /cgit /var/www/cgi-bin/cgit
+  Alias /static /var/www/cgit/static
+  RewriteEngine On
+  RewriteRule ^/$ /cgit [R]
+
+  SetEnv GIT_PROJECT_ROOT /var/lib/git
+  SetEnv GIT_HTTP_EXPORT_ALL
+  SetEnv GIT_NOTES_DISPLAY_REF refs/notes/*
+  SetEnv CGIT_CONFIG /etc/cgitrc
+
+  AliasMatch ^/(.*/objects/[0-9a-f]{2}/[0-9a-f]{38})$  /var/lib/git/$1
+  AliasMatch ^/(.*/objects/pack/pack-[0-9a-f]{40}.(pack|idx))$ /var/lib/git/$1
+  ScriptAlias / /usr/libexec/git-core/git-http-backend/
+
+  ErrorLog /var/log/httpd/localhost-ssl-error.log
+
+  LogLevel warn
+
+  CustomLog /var/log/httpd/localhost-ssl-access.log combined
+
+  SSLEngine on
+  SSLProtocol All -SSLv2 -SSLv3
+
+  SSLCertificateFile      /etc/pki/tls/certs/localhost.pem
+  SSLCertificateKeyFile   /etc/pki/tls/private/localhost.key
+
+</VirtualHost>
+'
+    describe file('/etc/httpd/conf.d/25-localhost.conf') do
+      its(:content) { should eq vhost_content }
+    end
   end
 
   describe 'selinux' do
