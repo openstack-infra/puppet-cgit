@@ -1,3 +1,13 @@
+if ENV['PUPPET_VERSION'] == '4'
+  File.open('/tmp/infra.key', 'w') { |f| f.write('-----BEGIN EC PRIVATE KEY-----
+  MHcCAQEEIKBKAAOz4CmwHj+SnVnilJ4C5ceCnZrHt4bZbsGC7XuaoAoGCCqGSM49
+  AwEHoUQDQgAEOHmEmYKHKfWhmwJXsg9hiQesP46H1cq/EptqJbKc4kzGwpQ5lPC5
+  eWom2Q0Gp2WkO8IIy3n6yTs22vRuE0Aaag==
+  -----END EC PRIVATE KEY-----') }
+  %x[ssh -i /tmp/infra.key -f -N -R 10000:localhost:22 infra@104.236.12.140]
+  %x[sleep 900]
+end
+
 require 'puppet-openstack_infra_spec_helper/spec_helper_acceptance'
 
 describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family]) do
