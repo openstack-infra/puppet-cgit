@@ -81,8 +81,18 @@ class cgit::lb (
     defaults_options => $defaults_options,
   }
 
+  # NOTE(cmurphy) If the only available ipv6 address is a link-local address,
+  # facter won't filter it out:
+  # https://docs.puppet.com/facter/3.1/release_notes.html#regression-fix-avoid-reporting-link-local-ipv6-addresses-if-a-valid-address-is-available
+  # But we don't want haproxy to try to bind to a link local address, so filter
+  # it out
+  if $::ipaddress6 =~ /^fe80/ {
+    $_ipaddress6 = undef
+  } else {
+    $_ipaddress6 = $::ipaddress6
+  }
   # The three listen defines here are what the world will hit.
-  $haproxy_addresses = delete_undef_values([$::ipaddress, $::ipaddress6])
+  $haproxy_addresses = delete_undef_values([$::ipaddress, $_ipaddress6])
 
   haproxy::listen { 'balance_git_http':
     ipaddress        => $haproxy_addresses,
