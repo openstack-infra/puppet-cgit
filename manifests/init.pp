@@ -67,8 +67,6 @@ class cgit(
     $daemon_port = 9418
   }
 
-  include ::httpd
-
   package { [
       'git-daemon',
       'highlight',
@@ -78,7 +76,10 @@ class cgit(
   package { 'cgit':
     ensure          => present,
     install_options => ['--enablerepo', 'epel'],
+    before          => Class['::httpd'],
   }
+
+  include ::httpd
 
   user { 'cgit':
     ensure     => present,
