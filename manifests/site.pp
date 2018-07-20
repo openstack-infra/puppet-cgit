@@ -95,7 +95,7 @@ define cgit::site(
     serveraliases => $serveraliases,
     docroot       => 'MEANINGLESS ARGUMENT',
     priority      => $cgit_vhost_priority,
-    template      => 'cgit/git.vhost.erb',
+    content       => template('cgit/git.vhost.erb'),
     ssl           => true,
     require       => [
       File[$staticfiles],
