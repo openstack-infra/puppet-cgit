@@ -1,0 +1,9 @@
+Code-Review+2: Clark Boylan <cboylan@sapwetik.org>
+Code-Review+2: Monty Taylor <mordred@inaugust.com>
+Workflow+1: Monty Taylor <mordred@inaugust.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Tue, 16 Oct 2018 19:49:18 +0000
+Reviewed-on: https://review.openstack.org/571987
+Project: openstack-infra/puppet-cgit
+Branch: refs/heads/master
