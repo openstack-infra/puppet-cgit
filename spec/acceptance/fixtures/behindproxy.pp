@@ -15,7 +15,7 @@ if ($::osfamily == 'RedHat') {
     manage_cgitrc          => true,
     behind_proxy           => true,
     cgitrc_settings        => {
-      'clone-prefix' => 'git://git.openstack.org https://git.openstack.org',
+      'clone-prefix' => 'https://git.openstack.org https://git.openstack.org',
       'root-title'   => 'OpenStack git repository browser',
     },
   }

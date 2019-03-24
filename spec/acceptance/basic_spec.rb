@@ -170,7 +170,7 @@ describe 'puppet-cgit module', :if => ['fedora', 'redhat'].include?(os[:family])
       it { should be_file }
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
-      its(:content) { should include 'clone-prefix=git://git.openstack.org https://git.openstack.org' }
+      its(:content) { should include 'clone-prefix=https://git.openstack.org https://git.openstack.org' }
     end
 
     describe file('/var/lib/git/.ssh/authorized_keys') do

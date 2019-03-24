@@ -14,7 +14,7 @@ if ($::osfamily == 'RedHat') {
     ssl_key_file           => '/etc/pki/tls/private/localhost.key',
     manage_cgitrc          => true,
     cgitrc_settings        => {
-      'clone-prefix' => 'git://git.openstack.org https://git.openstack.org',
+      'clone-prefix' => 'https://git.openstack.org https://git.openstack.org',
       'root-title'   => 'OpenStack git repository browser',
     },
   }
