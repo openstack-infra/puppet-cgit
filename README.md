@@ -1,3 +1,3 @@
-# OpenStack Cgit Module
+# This repo has moved to OpenDev
 
-This module installs and configures cgit
+It can now be found at [https://opendev.org/opendev/puppet-cgit](https://opendev.org/opendev/puppet-cgit)
